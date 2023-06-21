@@ -1,26 +1,43 @@
-import Profile from "./Profile/Profile";
-import Statistics from "./Statistics/Statistics";
-import FriendList from "./Friends/Friends";
-import TransactionHistory from "./TransactionHistory/TransactionHistory";
-import user from '../data/user.json';
-import data from '../data/data.json'
-import friends from '../data/friends.json';
-import transactions from '../data/transactions.json';
+import { Component } from 'react';
 
+export class App extends Component {
+  state = {
+    good: 0,
+    neutral: 0,
+    bad: 0,
+  };
 
-export const App = () => {
-  return (
-    <div>
-      <Profile
-        username={user.username}
-        tag={user.tag}
-        location={user.location}
-        avatar={user.avatar}
-        stats={user.stats}
-      />
-      <Statistics title="Upload stats" stats={data} />
-      <FriendList friends={friends} />;
-      <TransactionHistory items={transactions} />;
-    </div>
-  );
-};
+  countTotalFeedback = () => {
+    const {good, neutral, bad} = this.state
+    return good+neutral+bad
+  }
+
+  countPositiveFeedbackPercentage = () => {
+    const { good } = this.state;
+    return Math.round(good/this.countTotalFeedback()*100)
+  }
+
+  handleIncrement = stat => {
+    this.setState(prevState => {
+      return { [stat]: prevState[stat] + 1 };
+    });
+  };
+
+  render() {
+    const {good, neutral, bad} = this.state
+    return (
+      <div>
+        <h1>Please leave feedback</h1>
+        <button onClick={() => this.handleIncrement('good')}>Good</button>
+        <button onClick={() => this.handleIncrement('neutral')}>Neutral</button>
+        <button onClick={() => this.handleIncrement('bad')}>Bad</button>
+        <h1>Statistic</h1>
+        <p>Good: {good}</p>
+        <p>Neutral: {neutral}</p>
+        <p>Bad: {bad}</p>
+        <p>Total: {this.countTotalFeedback()}</p>
+        <p>Positive feedback: {this.countPositiveFeedbackPercentage()}</p>
+      </div>
+    );
+  }
+}
