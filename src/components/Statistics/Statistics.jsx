@@ -1,29 +1,20 @@
-import {
-  StatisticsStyle,
-  StatList,
-  Label,
-  Element,
-  Percentage,
-} from './Styled.Statistics';
+import { WrapStat, StatItem } from './Statistic.styled';
 
-export default function Statistics({ stats, title }) {
+const Statistic = ({
+  stat,
+  countTotalFeedback,
+  countPositiveFeedbackPercentage,
+}) => {
+  console.log(stat);
   return (
-    <StatisticsStyle>
-      {title && <h2>{title}</h2>}
-      <StatList>
-        {stats.map(el => {
-          return (
-            <Element key={el.id}>
-              <Label>{el.label}</Label>
-              <Percentage>{el.percentage}%</Percentage>
-            </Element>
-          );
-        })}
-      </StatList>
-    </StatisticsStyle>
+    <WrapStat>
+          {Object.keys(stat).map((oneStat) => 
+              <StatItem key={oneStat}>{oneStat}:{stat[oneStat]}</StatItem>
+      )}
+      <p>Total: {countTotalFeedback()} </p>
+      <p>Positive feedback: {countPositiveFeedbackPercentage()}%</p>
+    </WrapStat>
   );
-}
+};
 
-export function getRandomHexColor() {
-  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-}
+export default Statistic;

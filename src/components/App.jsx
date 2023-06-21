@@ -1,26 +1,51 @@
-import Profile from "./Profile/Profile";
-import Statistics from "./Statistics/Statistics";
-import FriendList from "./Friends/Friends";
-import TransactionHistory from "./TransactionHistory/TransactionHistory";
-import user from '../data/user.json';
-import data from '../data/data.json'
-import friends from '../data/friends.json';
-import transactions from '../data/transactions.json';
+import { Component } from 'react';
+import Statistic from './Statistics/Statistics';
+import Feedback from './Feedback/Feedback';
+import Section from './Section/Section';
 
+export class App extends Component {
+  state = {
+    good: 0,
+    neutral: 0,
+    bad: 0,
+  };
 
-export const App = () => {
-  return (
-    <div>
-      <Profile
-        username={user.username}
-        tag={user.tag}
-        location={user.location}
-        avatar={user.avatar}
-        stats={user.stats}
-      />
-      <Statistics title="Upload stats" stats={data} />
-      <FriendList friends={friends} />;
-      <TransactionHistory items={transactions} />;
-    </div>
-  );
-};
+  countTotalFeedback = () => {
+    const {good, neutral, bad} = this.state
+    return good+neutral+bad
+  }
+
+  countPositiveFeedbackPercentage = () => {
+    const { good } = this.state;
+    const total = this.countTotalFeedback();
+    const result = Math.round((good / total) * 100);
+    const finalResult = total === 0? 0 : result
+    return finalResult;
+  }
+
+  handleIncrement = stat => {
+    this.setState(prevState => {
+      return { [stat]: prevState[stat] + 1 };
+    });
+  };
+
+  render() {
+    return (
+      <div>
+        <Section title={'Please, leave your feedback'}>
+          <Feedback handleIncrement={this.handleIncrement} />
+        </Section>
+
+        <Section title={'Statictic'}>
+          <Statistic
+            countTotalFeedback={this.countTotalFeedback}
+            countPositiveFeedbackPercentage={
+              this.countPositiveFeedbackPercentage
+            }
+            stat={this.state}
+          />
+        </Section>
+      </div>
+    );
+  }
+}
