@@ -16,22 +16,7 @@ export class App extends Component {
     number: '',
   };
 
-  handleChange = evt => {
-    const { name, value } = evt.target;
-    this.setState({ [name]: value });
-  };
-
-  handleChangeFilter = evt => {
-    this.setState({ filter: evt.target.value })
-    console.log(this.state.filter)
-  }
-
-  reset = () => {
-    this.setState({name: '', number: ''})
-  }
-
-  handleSubmit = evt => {
-    evt.preventDefault();
+  addContact = () => {
     const { name, contacts, number } = this.state;
     const newContact = {
       name: name,
@@ -42,17 +27,49 @@ export class App extends Component {
     const updatedContacts = [...contacts, newContact];
     console.log(updatedContacts);
     this.setState({ contacts: updatedContacts });
+  };
+
+  handleChange = evt => {
+    const { name, value } = evt.target;
+    this.setState({ [name]: value });
+  };
+
+  handleChangeFilter = evt => {
+    this.setState({ filter: evt.target.value });
+    console.log(this.state.filter);
+  };
+
+  reset = () => {
+    this.setState({ name: '', number: '' });
+  };
+
+  handleSubmit = evt => {
+    evt.preventDefault();
+    this.addContact();
     this.reset();
   };
 
   onFilter = () => {
-    const { contacts, filter } = this.state
-    const filterToLowerCase = filter.toLocaleLowerCase()
+    const { contacts, filter } = this.state;
+    const filterToLowerCase = filter.toLowerCase();
 
     return contacts.filter(({ name }) =>
       name.toLowerCase().includes(filterToLowerCase)
     );
+  };
+
+  onDeleteContact = id => {
+   this.setState(prevState => {
+     const updateContacts = prevState.contacts.filter(
+       contact => contact.id !== id
+     );
+
+     return {
+       contacts: updateContacts,
+     };
+   });
   }
+
 
   render() {
     return (
@@ -80,7 +97,7 @@ export class App extends Component {
         </form>
         {this.state.contacts.length > 0 && (
           <>
-            <ContactsList contacts={this.onFilter()} />
+            <ContactsList contacts={this.onFilter()} onDeleteContact={this.onDeleteContact} />
             <Filter
               filter={this.state.filter}
               handleChangeFilter={this.handleChangeFilter}
@@ -91,5 +108,3 @@ export class App extends Component {
     );
   }
 }
-
-
